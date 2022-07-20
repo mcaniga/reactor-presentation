@@ -13,6 +13,7 @@ public class PurchaseOrder {
     private String category;
     private int quantity;
 
+    // generates random item
     public PurchaseOrder() {
         this.item = Util.faker().commerce().productName();
         this.price = Double.parseDouble(Util.faker().commerce().price());

@@ -2,6 +2,9 @@ package org.example.presentation.sinks;
 
 import lombok.Data;
 
+/**
+ * Simple message object with sender name, reciever name and message + formatting
+ */
 @Data
 public class SlackMessage {
 

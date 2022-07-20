@@ -11,7 +11,10 @@ public class SlackRoom {
 
     public SlackRoom(String name) {
         this.name = name;
-        this.sink = Sinks.many().replay().all();
+        this.sink = Sinks
+                .many() // broadcast to many subscribers
+                .replay() // use cached items for new subscribers
+                .all();
         this.flux = this.sink.asFlux();
     }
 

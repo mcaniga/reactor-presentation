@@ -6,21 +6,24 @@ import java.time.Duration;
 import java.util.Objects;
 
 public class OrderService {
+    private Flux<PurchaseOrder> purchaseOrderFlux;
 
-    private Flux<PurchaseOrder> flux;
-
-    public Flux<PurchaseOrder> orderStream(){
-        if(Objects.isNull(flux))
-            flux=getOrderStream();
-        return flux;
+    // if flux is not initialized, creates new order stream, otherwise use initialized one
+    public Flux<PurchaseOrder> orderStream() {
+        if (Objects.isNull(purchaseOrderFlux)) {
+            initializePurchaseOrderFlux();
+        }
+        return purchaseOrderFlux;
     }
 
-    private Flux<PurchaseOrder> getOrderStream(){
-        return Flux.interval(Duration.ofMillis(100))
-                    .map(i -> new PurchaseOrder())
-                    .publish()
-                    .refCount(2);
+    private void initializePurchaseOrderFlux() {
+        purchaseOrderFlux = generatePurchaseOrderEach100Ms();
     }
 
-
+    private Flux<PurchaseOrder> generatePurchaseOrderEach100Ms() {
+        return Flux.interval(Duration.ofMillis(100)) // note: .interval() uses Schedulers.parallel
+                .map(i -> new PurchaseOrder())
+                .publish()
+                .refCount(2);
+    }
 }

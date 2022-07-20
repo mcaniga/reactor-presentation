@@ -10,15 +10,20 @@ public class HotColdPublishersDemo {
         RevenueService revenueService = new RevenueService();
         InventoryService inventoryService = new InventoryService();
 
-        // revenue and inv - observe the order stream
-        orderService.orderStream().subscribe(revenueService.subscribeOrderStream());
-        orderService.orderStream().subscribe(inventoryService.subscribeOrderStream());
+        // observe the order stream, when new element occurs, update inventory service
+        orderService
+                .orderStream()
+                .subscribe(revenueService.increaseCategoryRevenue());
 
-        inventoryService.inventoryStream()
+        // observe the order stream, when new element occurs, decrese category count
+        orderService
+                .orderStream()
+                .subscribe(inventoryService.decreaseCategoryCount());
 
+        inventoryService.streamInventoryDB()
                 .subscribe(Util.subscriber("inventory"));
 
-        revenueService.revenueStream()
+        revenueService.streamRevenueDB()
                 .subscribe(Util.subscriber("revenue"));
 
         Util.sleepSeconds(60);

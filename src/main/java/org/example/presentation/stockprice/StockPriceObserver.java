@@ -6,13 +6,16 @@ import org.reactivestreams.Subscription;
 import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
 
+// custom subscriber
 public class StockPriceObserver {
+
+    private static final int COUNTDOWNS_TO_PASS_AWAIT = 1;
 
     public static void main(String[] args) throws InterruptedException {
 
-        CountDownLatch latch = new CountDownLatch(1);
+        CountDownLatch latch = new CountDownLatch(COUNTDOWNS_TO_PASS_AWAIT);
 
-        StockPricePublisher.getPrice()
+        StockPricePublisher.generatePrices()
                 .subscribeWith(new Subscriber<Integer>() {
 
                     private Subscription subscription;
@@ -26,7 +29,7 @@ public class StockPriceObserver {
                     @Override
                     public void onNext(Integer price) {
                         System.out.println(LocalDateTime.now() + " : Price : " + price);
-                        if(price > 110 || price < 90){
+                        if(price > 110 || price < 90){ // if price is in given range, cancel subscription and decrease latch
                             this.subscription.cancel();
                             latch.countDown();
                         }
@@ -43,8 +46,7 @@ public class StockPriceObserver {
                     }
                 });
 
+        // suspend current thread until count down is zero = until onNext, onError, onComplete is called
         latch.await();
     }
-
-
 }

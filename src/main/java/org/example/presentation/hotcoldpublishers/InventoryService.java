@@ -7,22 +7,30 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * Contains in memory inventory DB represented by HashMap
+ */
 public class InventoryService {
+    private final Map<String, Integer> inventoryDB = new HashMap<>();
 
-    private Map<String, Integer> db = new HashMap<>();
-
-    public InventoryService(){
-        db.put("Kids", 100);
-        db.put("Automotive", 100);
+    public InventoryService() {
+        initDB();
     }
 
-    public Consumer<PurchaseOrder> subscribeOrderStream(){
-        return p -> db.computeIfPresent(p.getCategory(), (k, v) -> v - p.getQuantity());
+    private void initDB() {
+        inventoryDB.put("Kids", 100); // (category, count)
+        inventoryDB.put("Automotive", 100);
     }
 
-    public Flux<String> inventoryStream(){
+    // updates the count in inventoryDB if category key is present
+    public Consumer<PurchaseOrder> decreaseCategoryCount() {
+        return purchaseOrder -> inventoryDB.computeIfPresent(
+                purchaseOrder.getCategory(), (category, count) -> count - purchaseOrder.getQuantity()
+        );
+    }
+
+    public Flux<String> streamInventoryDB() {
         return Flux.interval(Duration.ofSeconds(2))
-                .map(i -> db.toString());
+                .map(i -> inventoryDB.toString());
     }
-
 }

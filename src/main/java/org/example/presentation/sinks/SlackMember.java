@@ -2,6 +2,9 @@ package org.example.presentation.sinks;
 
 import java.util.function.Consumer;
 
+/**
+ * Member of slack with name and consumer
+ */
 public class SlackMember {
 
     private String name;
