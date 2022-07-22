@@ -20,13 +20,13 @@ public class SlackRoom {
 
     public void joinRoom(SlackMember slackMember) {
         System.out.println(slackMember.getName() + "------------- Joined ---------------" + this.name);
-        this.subscribe(slackMember);
-        slackMember.setMessagePoster(
+        this.subscribeAndRecieveOldMessages(slackMember);
+        slackMember.setMessageSayer(
                 msg -> this.postMessage(msg, slackMember)
         );
     }
 
-    private void subscribe(SlackMember slackMember) {
+    private void subscribeAndRecieveOldMessages(SlackMember slackMember) {
         this.flux
                 .filter(message -> !message.getSender().equals(slackMember.getName()))
                 .doOnNext(message -> message.setReceiver(slackMember.getName()))

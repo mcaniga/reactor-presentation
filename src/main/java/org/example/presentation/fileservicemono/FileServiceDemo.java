@@ -1,13 +1,6 @@
-package org.example.presentation.fileservice;
+package org.example.presentation.fileservicemono;
 
 import org.example.presentation.util.Util;
-import reactor.core.publisher.Mono;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 /*
     Mono example - simple FileService that manipulates with files from resources

@@ -1,4 +1,4 @@
-package org.example.presentation.overflow;
+package org.example.presentation.buffer;
 
 import org.example.presentation.util.Util;
 import reactor.core.publisher.Flux;
@@ -6,7 +6,7 @@ import reactor.core.publisher.GroupedFlux;
 
 import java.time.Duration;
 
-public class OverflowDemo {
+public class BufferingDemo {
     public static void main(String[] args) {
         // subscribeToEventStreamWithoutBuffer();
         // subscribeToEventStreamWithBuffer();
@@ -36,8 +36,9 @@ public class OverflowDemo {
 
     private static Flux<String> emitEventEachSecond() {
         return Flux
-                .interval(Duration.ofMillis(200)) // each second increment value starting with 0
-                .map(i -> "event" + i); //
+                .interval(Duration.ofMillis(200)) // each second increment value starting with 0, note: interval uses Schedulers.parallel()
+                .map(i -> "event" + i)
+                .doOnNext(event -> Util.printThreadName("emitting thread: "));
     }
 
     private static void subscribeToGroupedFlux(GroupedFlux<Integer, String> flux) {
