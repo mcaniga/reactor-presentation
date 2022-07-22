@@ -6,7 +6,7 @@ import reactor.core.publisher.Sinks;
 public class SlackRoom {
 
     private String name;
-    private Sinks.Many<SlackMessage> sink;
+    private Sinks.Many<SlackMessage> sink; // sink = Processor = composed from Producer and Consumer
     private Flux<SlackMessage> flux;
 
     public SlackRoom(String name) {
@@ -15,31 +15,29 @@ public class SlackRoom {
                 .many() // broadcast to many subscribers
                 .replay() // use cached items for new subscribers
                 .all();
-        this.flux = this.sink.asFlux();
+        this.flux = this.sink.asFlux(); // get Producer part of the sink for subscribing (pull from sink)
     }
 
-    public void joinRoom(SlackMember slackMember){
+    public void joinRoom(SlackMember slackMember) {
         System.out.println(slackMember.getName() + "------------- Joined ---------------" + this.name);
         this.subscribe(slackMember);
-        slackMember.setMessageConsumer(
+        slackMember.setMessagePoster(
                 msg -> this.postMessage(msg, slackMember)
         );
     }
 
-    private void subscribe(SlackMember slackMember){
+    private void subscribe(SlackMember slackMember) {
         this.flux
-                .filter(sm -> !sm.getSender().equals(slackMember.getName()))
-                .doOnNext(sm -> sm.setReceiver(slackMember.getName()))
+                .filter(message -> !message.getSender().equals(slackMember.getName()))
+                .doOnNext(message -> message.setReceiver(slackMember.getName()))
                 .map(SlackMessage::toString)
                 .subscribe(slackMember::receives);
     }
 
-    private void postMessage(String msg, SlackMember slackMember){
-        SlackMessage slackMessage = new SlackMessage();
-        slackMessage.setSender(slackMember.getName());
-        slackMessage.setMessage(msg);
-        this.sink.tryEmitNext(slackMessage);
+    private void postMessage(String msg, SlackMember sender) {
+        SlackMessage message = new SlackMessage();
+        message.setSender(sender.getName());
+        message.setMessage(msg);
+        this.sink.tryEmitNext(message); // send message to sink (push to sink)
     }
-
-
 }

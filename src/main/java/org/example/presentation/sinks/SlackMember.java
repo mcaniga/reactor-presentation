@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 public class SlackMember {
 
     private String name;
-    private Consumer<String> messageConsumer;
+    private Consumer<String> messagePoster;
 
     public SlackMember(String name) {
         this.name = name;
@@ -23,10 +23,10 @@ public class SlackMember {
     }
 
     public void says(String message){
-        this.messageConsumer.accept(message);
+        this.messagePoster.accept(message);
     }
 
-    void setMessageConsumer(Consumer<String> messageConsumer) {
-        this.messageConsumer = messageConsumer;
+    void setMessagePoster(Consumer<String> messagePoster) {
+        this.messagePoster = messagePoster;
     }
 }

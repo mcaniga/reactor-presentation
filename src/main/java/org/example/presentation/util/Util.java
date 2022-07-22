@@ -37,6 +37,10 @@ public class Util {
         }
     }
 
+    public static void printThreadName(String msg) {
+        System.out.println(msg + "\t\t: Thread : " + Thread.currentThread().getName());
+    }
+
     public static Subscriber<Object> subscriber(){
         return new DefaultSubscriber();
     }
