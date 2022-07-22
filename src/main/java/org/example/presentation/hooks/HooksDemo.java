@@ -15,8 +15,7 @@ public class HooksDemo {
                     for (int i = 0; i < 5; i++) {
                         fluxSink.next(i);
                     }
-                    //fluxSink.complete();
-                    fluxSink.error(new RuntimeException("oops"));
+                    fluxSink.complete();
                     System.out.println("--completed");
                 })
                 .doOnComplete(() -> System.out.println("doOnComplete"))
@@ -29,7 +28,7 @@ public class HooksDemo {
                 .doOnCancel(() -> System.out.println("doOnCancel"))
                 .doFinally(signal -> System.out.println("doFinally 1 : " + signal))
                 .doOnDiscard(Object.class, o -> System.out.println("doOnDiscard : " + o))
-                .take(2) // takes 0, 1 and discards 2, 3, 4
+                //.take(2) // takes 0, 1 and discards 2, 3, 4
                 .doFinally(signal -> System.out.println("doFinally 2 : " + signal))
                 .subscribe(Util.subscriber());
 
